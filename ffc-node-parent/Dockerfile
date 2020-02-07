@@ -16,5 +16,5 @@ ENV NODE_ENV production
 # Set global npm dependancies to be stored under the node user directory
 ENV NPM_CONFIG_PREFIX=/home/node/.npm-global
 ENV PATH=$PATH:/home/node/.npm-global/bin
-LABEL uk.gov.defra.ffc-node-base.version=$VERSION \
-      uk.gov.defra.ffc-node-base.node-version=$NODE_VERSION
+LABEL uk.gov.defra.ffc-node-parent.version=$VERSION \
+      uk.gov.defra.ffc-node-parent.node-version=$NODE_VERSION

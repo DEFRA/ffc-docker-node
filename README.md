@@ -1,4 +1,4 @@
-# FFC docker base
+# FFC docker parent
 
 This repository contains the docker files that build parent container images for FFC projects to extend. Each sub-folder contains the source files required to build a single image. There is also an examples folder that contains example Dockerfiles for various services. These can be used to build a Dockerfile for your service which uses the parent images created by this project.
 

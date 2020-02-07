@@ -56,7 +56,7 @@ EXPOSE ${PORT}
 #   but none of the tools required to build those files. This reduces the attack surface, and also the size of the final production image
 COPY --from=development /home/node/app/ ./app/
 
-# This is the command that is run for the production service. The parent base image has an ENTRYPOINT that uses a lightweight
+# This is the command that is run for the production service. The parent image has an ENTRYPOINT that uses a lightweight
 #   init program "tini" that handles signals. As long as we don't override the ENTRYPOINT the "tini" routine will handle signals and
 #   orphaned processes
 CMD [ "node", "app/index" ]
