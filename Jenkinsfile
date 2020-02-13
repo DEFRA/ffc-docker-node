@@ -54,6 +54,12 @@ node {
       }
     }
 
+    if (!mergedPrNo) {
+      stage('Pretend PR has merged to test ECR image deletion') {
+        mergedPrNo="pr$pr"
+      }
+    }
+
     if (mergedPrNo) {
       // If this is a merge to master, delete the PR images
       stage('Remove merged PR images from registry') {
