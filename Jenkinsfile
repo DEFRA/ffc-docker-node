@@ -19,7 +19,7 @@ node {
   checkout scm
 
   try {
-    stage('Set variables') {
+    stage('Initialise variables') {
       (pr, containerTag, mergedPrNo) = defraUtils.getVariables(repoName)
       defraUtils.setGithubStatusPending()
 
@@ -30,7 +30,7 @@ node {
       imageTag = "$version-node${nodeVersions[0]}" + (pr ? "-pr$pr" : "")
     }
 
-    stage('Build Parent and development image') {
+    stage('Build images') {
       // Build the parent image. 1 parent image per node version required.
       // Tag the images with the PR build (if it's a PR build)
       // Name the image according to the node version used
@@ -46,7 +46,7 @@ node {
       --build-arg VERSION=$version --target development ffc-node-parent/. "
     }
 
-    stage('Push images to registry') {
+    stage('Push images') {
       // Push the parent images
       // Push the development images
       docker.withRegistry("https://$registry", regCredsId) {
@@ -63,7 +63,7 @@ node {
 
     if (mergedPrNo) {
       // If this is a merge to master, delete the PR images
-      stage('Remove merged PR images from registry') {
+      stage('Delete merged PR images') {
         prImageTag = "$version-node${nodeVersions[0]}-$mergedPrNo"
         sh "aws --region $awsRegion ecr batch-delete-image --repository-name $imageRepository --image-ids imageTag=$prImageTag"
         sh "aws --region $awsRegion ecr batch-delete-image --repository-name $imageRepositoryDevelopment --image-ids imageTag=$prImageTag"
