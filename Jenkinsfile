@@ -19,7 +19,7 @@ node {
   checkout scm
 
   try {
-    stage('Initialise variables') {
+    stage('Set variables') {
       (pr, containerTag, mergedPrNo) = defraUtils.getVariables(repoName)
       defraUtils.setGithubStatusPending()
 
@@ -56,14 +56,14 @@ node {
     }
 
     if (!mergedPrNo) {
-      stage('Pretend PR has merged to test ECR image deletion') {
+      stage('Fake merge') {
         mergedPrNo="pr$pr"
       }
     }
 
     if (mergedPrNo) {
       // If this is a merge to master, delete the PR images
-      stage('Delete merged PR images') {
+      stage('Clean registry') {
         prImageTag = "$version-node${nodeVersions[0]}-$mergedPrNo"
         sh "aws --region $awsRegion ecr batch-delete-image --repository-name $imageName --image-ids imageTag=$prImageTag"
         sh "aws --region $awsRegion ecr batch-delete-image --repository-name $imageNameDevelopment --image-ids imageTag=$prImageTag"
