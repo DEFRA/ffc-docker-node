@@ -28,7 +28,7 @@ node {
         tagVersion = tagVersion + "-pr${pr}"
       }
       def imageName = "ffc-node-parent-${nodeVersions[0]}:${tagVersion}"
-      sh "docker build --no-cache --tag $imageName --tag $registry/$imagename --build-arg NODE_VERSION=${nodeVersions[0]} --build-arg VERSION=$version ffc-node-parent/. "
+      sh "docker build --no-cache --tag $imageName --tag $registry/$imageName --build-arg NODE_VERSION=${nodeVersions[0]} --build-arg VERSION=$version ffc-node-parent/. "
     }
     stage('Build development image') {
 
