@@ -21,7 +21,7 @@ node {
       (pr, containerTag, mergedPrNo) = defraUtils.getVariables(repoName)
       defraUtils.setGithubStatusPending()
     }
-    stage('Build Parent image') {
+    stage('Build Parent and development image') {
       // Build the parent image. 1 parent image per node version required.
       // Tag the images with the PR build (if it's a PR build)
       // Name the image according to the node version used
@@ -31,13 +31,11 @@ node {
         tagVersion = tagVersion + "-pr${pr}"
       }
       imageName = "ffc-node-parent-${nodeVersions[0]}"
+      devImageName = "ffc-node-development-${nodeVersions[0]}"
       sh "docker build --no-cache --tag $imageName:$tagVersion --tag $registry/$imageName:$tagVersion --build-arg NODE_VERSION=${nodeVersions[0]} \
       --build-arg VERSION=$tagVersion ffc-node-parent/. "
-    }
-    stage('Build development image') {
-      devImageName = "ffc-node-development-${nodeVersions[0]}"
       sh "docker build --no-cache --tag $devImageName:$tagVersion --tag $registry/$devImageName:$tagVersion --build-arg PARENT_IMAGE=$imageName \
-      --build-arg BASE_VERSION=$tagVersion --build-arg REGISTRY=$registry ffc-node-development/. "
+      --build-arg BASE_VERSION=$tagVersion ffc-node-development/. "
     }
 
     // Then build the dev images, 1 per node version that reference the parent image that has that node version
