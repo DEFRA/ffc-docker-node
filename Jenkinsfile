@@ -45,11 +45,11 @@ node {
       }
     }
 
-    // if (!mergedPrNo) {
-    //   stage('Fake merge') {
-    //     mergedPrNo="pr$pr"
-    //   }
-    // }
+    if (!mergedPrNo) {
+      stage('Fake merge') {
+        mergedPrNo="pr$pr"
+      }
+    }
 
     if (mergedPrNo) {
       // Remove PR images from registry after merge to master
