@@ -1,6 +1,7 @@
 ARG REGISTRY=562955126301.dkr.ecr.eu-west-2.amazonaws.com
 ARG BASE_VERSION=1.0.0
-FROM $REGISTRY/ffc-node-parent:$BASE_VERSION
+ARG PARENT_IMAGE=ffc-node-parent
+FROM $REGISTRY/$PARENT_IMAGE:$BASE_VERSION
 
 ENV NODE_ENV development
 
