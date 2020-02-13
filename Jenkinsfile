@@ -2,6 +2,7 @@
 import uk.gov.defra.ffc.DefraUtils
 def defraUtils = new DefraUtils()
 
+def awsRegion = 'eu-west-2'
 def containerTag = ''
 def devImageName = 'ffc-node-development'
 def imageName = 'ffc-node'
@@ -64,8 +65,8 @@ node {
       // If this is a merge to master, delete the PR images
       stage('Remove merged PR images from registry') {
         prImageTag = "$version-node${nodeVersions[0]}-$mergedPrNo"
-        sh "aws ecr batch-delete-image --repository-name $imageRepository --image-ids imageTag=$prImageTag"
-        sh "aws ecr batch-delete-image --repository-name $imageRepositoryDevelopment --image-ids imageTag=$prImageTag"
+        sh "aws --region $awsRegion ecr batch-delete-image --repository-name $imageRepository --image-ids imageTag=$prImageTag"
+        sh "aws --region $awsRegion ecr batch-delete-image --repository-name $imageRepositoryDevelopment --image-ids imageTag=$prImageTag"
       }
     }
 
