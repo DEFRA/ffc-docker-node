@@ -33,9 +33,9 @@ node {
       imageName = "ffc-node-parent-${nodeVersions[0]}"
       devImageName = "ffc-node-development-${nodeVersions[0]}"
       sh "docker build --no-cache --tag $imageName:$tagVersion --tag $registry/$imageName:$tagVersion --build-arg NODE_VERSION=${nodeVersions[0]} \
-      --build-arg VERSION=$tagVersion ffc-node-parent/. "
-      sh "docker build --no-cache --tag $devImageName:$tagVersion --tag $registry/$devImageName:$tagVersion --build-arg PARENT_IMAGE=$imageName \
-      --build-arg BASE_VERSION=$tagVersion ffc-node-development/. "
+      --build-arg VERSION=$tagVersion --target production ffc-node-parent/. "
+      sh "docker build --no-cache --tag $devImageName:$tagVersion --tag $registry/$devImageName:$tagVersion --build-arg NODE_VERSION=${nodeVersions[0]} \
+      --build-arg VERSION=$tagVersion --target development ffc-node-parent/. "
     }
 
     // Then build the dev images, 1 per node version that reference the parent image that has that node version
