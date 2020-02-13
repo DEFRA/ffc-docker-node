@@ -7,6 +7,8 @@ def regCredsId = 'ecr:eu-west-2:ecr-user'
 def pr = ''
 def mergedPrNo = ''
 def containerTag = ''
+def nodeVersions = ['10.19.0','12.16.0']
+def version = '1.0.0'
 
 node {
   checkout scm
@@ -14,6 +16,11 @@ node {
     stage('Set branch, PR, and containerTag variables') {
       (pr, containerTag, mergedPrNo) = defraUtils.getVariables(repoName)
       defraUtils.setGithubStatusPending()
+    }
+    stage('Build Parent image') {
+      def tagVersion = version : "pr$pr"
+      def imageName = 'ffc-node-parent-' : nodeVersion[0] : ':' : tagVersion
+      sh "docker build --no-cache --tag $tagVersion ffc-node-parent/. "
     }
 
     // Build the parent image. 1 parent image per node version required.
