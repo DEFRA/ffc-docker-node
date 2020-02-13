@@ -55,12 +55,6 @@ node {
       }
     }
 
-    if (!mergedPrNo) {
-      stage('Fake merge') {
-        mergedPrNo="pr$pr"
-      }
-    }
-
     if (mergedPrNo) {
       // If this is a merge to master, delete the PR images
       stage('Clean registry') {
