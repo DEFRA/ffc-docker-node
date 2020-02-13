@@ -30,25 +30,15 @@ node {
       imageTag = "$version-node${nodeVersions[0]}" + (pr ? "-pr$pr" : "")
     }
 
-    stage('Build images') {
-      // Build the parent image. 1 parent image per node version required.
-      // Tag the images with the PR build (if it's a PR build)
-      // Name the image according to the node version used
-      // Tag the image according to our version, if it's PR build, include the PR number in the version such as @1.0.0-pr1
-
+    stage('Build') {
       sh "docker build --no-cache --tag $imageRepository:$imageTag --build-arg NODE_VERSION=${nodeVersions[0]} \
       --build-arg VERSION=$version --target production ffc-node-parent/. "
 
-      // Then build the dev images, 1 per node version that reference the parent image that has that node version
-      // Name those according to the node version used
-      // Tag them with our version
       sh "docker build --no-cache --tag $imageRepositoryDevelopment:$imageTag --build-arg NODE_VERSION=${nodeVersions[0]} \
       --build-arg VERSION=$version --target development ffc-node-parent/. "
     }
 
-    stage('Push images') {
-      // Push the parent images
-      // Push the development images
+    stage('Push') {
       docker.withRegistry("https://$registry", regCredsId) {
         sh "docker push $imageRepository:$imageTag"
         sh "docker push $imageRepositoryDevelopment:$imageTag"
@@ -62,7 +52,7 @@ node {
     }
 
     if (mergedPrNo) {
-      // If this is a merge to master, delete the PR images
+      // Remove PR images from registry after merge to master
       stage('Clean registry') {
         prImageTag = "$version-node${nodeVersions[0]}-$mergedPrNo"
         sh "aws --region $awsRegion ecr batch-delete-image --repository-name $imageName --image-ids imageTag=$prImageTag"
