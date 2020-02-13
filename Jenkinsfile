@@ -55,8 +55,11 @@ node {
       // Remove PR images from registry after merge to master
       stage('Clean registry') {
         prImageTag = "$version-node${nodeVersions[0]}-$mergedPrNo"
-        sh "aws --region $awsRegion ecr batch-delete-image --repository-name $imageName --image-ids imageTag=$prImageTag"
-        sh "aws --region $awsRegion ecr batch-delete-image --repository-name $imageNameDevelopment --image-ids imageTag=$prImageTag"
+        prImageDigest = sh(returnStdout: true, script: "docker images --no-trunc --quiet $registry/$imageName:$prImageTag").trim()
+        prImageDigestDevelopment = sh(returnStdout: true, script: "docker images --no-trunc --quiet $registry/$imageNameDevelopment:$prImageTag").trim()
+
+        sh "aws --region $awsRegion ecr batch-delete-image --repository-name $imageName --image-ids imageDigest=$prImageDigest"
+        sh "aws --region $awsRegion ecr batch-delete-image --repository-name $imageNameDevelopment --image-ids imageDigest=$prImageDigestDevelopment"
       }
     }
 
