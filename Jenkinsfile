@@ -3,6 +3,7 @@ import uk.gov.defra.ffc.DefraUtils
 def defraUtils = new DefraUtils()
 
 def registry = '562955126301.dkr.ecr.eu-west-2.amazonaws.com'
+def repoName = 'ffc-docker-base'
 def regCredsId = 'ecr:eu-west-2:ecr-user'
 def pr = ''
 def mergedPrNo = ''
