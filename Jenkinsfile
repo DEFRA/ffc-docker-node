@@ -18,8 +18,8 @@ node {
       defraUtils.setGithubStatusPending()
     }
     stage('Build Parent image') {
-      def tagVersion = version : "pr$pr"
-      def imageName = 'ffc-node-parent-' : nodeVersion[0] : ':' : tagVersion
+      def tagVersion = "${version}-pr${pr}"
+      def imageName = "ffc-node-parent-${nodeVersion[0]}:${tagVersion}"
       sh "docker build --no-cache --tag $tagVersion ffc-node-parent/. "
     }
 
