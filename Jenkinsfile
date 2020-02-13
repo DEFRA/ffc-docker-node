@@ -37,6 +37,12 @@ node {
       sh "docker build --no-cache --tag $devImageName:$tagVersion --tag $registry/$devImageName:$tagVersion --build-arg NODE_VERSION=${nodeVersions[0]} \
       --build-arg VERSION=$tagVersion --target development ffc-node-parent/. "
     }
+    stage('Push images to registry') {
+      docker.withRegistry("https://$registry", regCredsId) {
+        sh "docker push $registry/$imageName:$tagVersion"
+        sh "docker push $registry/$devImageName:$tagVersion"
+      }
+    }
 
     // Then build the dev images, 1 per node version that reference the parent image that has that node version
     // Name those according to the node version used
