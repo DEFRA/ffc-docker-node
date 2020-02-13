@@ -4,8 +4,8 @@ def defraUtils = new DefraUtils()
 
 def awsRegion = 'eu-west-2'
 def containerTag = ''
-def devImageName = 'ffc-node-development'
 def imageName = 'ffc-node'
+def imageNameDevelopment = 'ffc-node-development'
 def imageTag = ''
 def mergedPrNo = ''
 def nodeVersions = ['12.16.0']
@@ -26,7 +26,7 @@ node {
       imageName = "ffc-node"
       imageNameDevelopment = "ffc-node-development"
       imageRepository = "$registry/$imageName"
-      imageRepositoryDevelopment = "$registry/$devImageName"
+      imageRepositoryDevelopment = "$registry/$imageNameDevelopment"
       imageTag = "$version-node${nodeVersions[0]}" + (pr ? "-pr$pr" : "")
     }
 
@@ -65,8 +65,8 @@ node {
       // If this is a merge to master, delete the PR images
       stage('Delete merged PR images') {
         prImageTag = "$version-node${nodeVersions[0]}-$mergedPrNo"
-        sh "aws --region $awsRegion ecr batch-delete-image --repository-name $imageRepository --image-ids imageTag=$prImageTag"
-        sh "aws --region $awsRegion ecr batch-delete-image --repository-name $imageRepositoryDevelopment --image-ids imageTag=$prImageTag"
+        sh "aws --region $awsRegion ecr batch-delete-image --repository-name $imageName --image-ids imageTag=$prImageTag"
+        sh "aws --region $awsRegion ecr batch-delete-image --repository-name $imageNameDevelopment --image-ids imageTag=$prImageTag"
       }
     }
 
