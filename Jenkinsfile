@@ -5,13 +5,13 @@ def defraUtils = new DefraUtils()
 def containerTag = ''
 def devImageName = 'ffc-node-development'
 def imageName = 'ffc-node'
+def imageTag = ''
 def mergedPrNo = ''
 def nodeVersions = ['12.16.0']
 def pr = ''
 def regCredsId = 'ecr:eu-west-2:ecr-user'
 def registry = '562955126301.dkr.ecr.eu-west-2.amazonaws.com'
 def repoName = 'ffc-docker-parent'
-def imageTag = version
 def version = '1.0.0'
 
 node {
