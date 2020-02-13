@@ -21,7 +21,7 @@ node {
     stage('Build Parent image') {
       def tagVersion = "${version}-pr${pr}"
       def imageName = "ffc-node-parent-${nodeVersions[0]}:${tagVersion}"
-      sh "docker build --no-cache --tag $tagVersion ffc-node-parent/. "
+      sh "docker build --no-cache --tag $imageName ffc-node-parent/. "
     }
 
     // Build the parent image. 1 parent image per node version required.
