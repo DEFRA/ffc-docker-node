@@ -23,14 +23,15 @@ node {
 
   try {
     stage('Set variables') {
-      (pr, containerTag, mergedPrNo) = defraUtils.getVariables(repoName)
+      imageTag = "$version-node${nodeVersion}"
+      (pr, containerTag, mergedPrNo) = defraUtils.getVariables(repoName, imageTag)
       defraUtils.setGithubStatusPending()
 
       imageName = "ffc-node"
       imageNameDevelopment = "ffc-node-development"
       imageRepository = "$registry/$imageName"
       imageRepositoryDevelopment = "$registry/$imageNameDevelopment"
-      imageTag = "$version-node${nodeVersion}" + (pr ? "-pr$pr" : "")
+      imageTag = imageTag + (pr ? "-pr$pr" : "")
     }
 
     stage('Build') {
