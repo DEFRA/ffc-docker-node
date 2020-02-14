@@ -56,12 +56,12 @@ node {
       // Remove PR images from registry after merge to master
       stage('Clean registry') {
         prImageTag = "$version-node${nodeVersions[0]}-$mergedPrNo"
-        prImageDigest = sh(returnStdout: true, script: "
-          aws ecr describe-images --image-ids imageTag=$prImageTag --query 'imageDetails[].imageDigest' --repository-name=$imageName"
-        )
-        prImageDigestDevelopment = sh(returnStdout: true, script: "
-          aws ecr describe-images --image-ids imageTag=$prImageTag --query 'imageDetails[].imageDigest' --repository-name=$imageNameDevelopment"
-        )
+        prImageDigest = sh(returnStdout: true, script: """
+          aws ecr describe-images --image-ids imageTag=$prImageTag --query 'imageDetails[].imageDigest' --repository-name=$imageName
+        """)
+        prImageDigestDevelopment = sh(returnStdout: true, script: """
+          aws ecr describe-images --image-ids imageTag=$prImageTag --query 'imageDetails[].imageDigest' --repository-name=$imageNameDevelopment
+        """)
 
         // Delete merged PR tags from images in registry
         sh "aws --region $awsRegion ecr batch-delete-image --image-ids imageTag=$prImageTag --repository-name $imageName"
