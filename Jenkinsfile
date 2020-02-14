@@ -65,25 +65,27 @@ node {
             --repository-name=$imageName
         """).trim()
         prImageDigestDevelopment = sh(returnStdout: true, script: """
-          docker images --no-trunc --quiet $registry/$imageNameDevelopment:$prImageTag
+          aws --region $awsRegion \
+            ecr describe-images \
+            --image-ids imageTag=$prImageTag \
+            --output text \
+            --query 'imageDetails[].imageDigest' \
+            --repository-name=$imageNameDevelopment
         """).trim()
 
-        echo prImageDigest
-        echo prImageDigestDevelopment
-
         // Delete merged PR image tags and digests from registry
-        prImageDigest = sh(returnStdout: true, script: """
+        sh """
           aws --region $awsRegion \
             ecr batch-delete-image \
-            --image-ids imageTag=$prImageTag,imageDigest=$prImageDigestDevelopment \
+            --image-ids imageTag=$prImageTag,imageDigest=$prImageDigest \
             --repository-name $imageName
-        """)
-        prImageDigestDevelopment = sh(returnStdout: true, script: """
+        """
+        sh """
           aws --region $awsRegion \
             ecr batch-delete-image \
             --image-ids imageTag=$prImageTag,imageDigest=$prImageDigestDevelopment \
             --repository-name $imageNameDevelopment
-        """)
+        """
       }
     }
 
