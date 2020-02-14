@@ -8,7 +8,7 @@ def imageName = 'ffc-node'
 def imageNameDevelopment = 'ffc-node-development'
 def imageTag = ''
 def mergedPrNo = ''
-def nodeVersions = ['12.16.0']
+def nodeVersion = '12.16.0'
 def pr = ''
 def regCredsId = 'ecr:eu-west-2:ecr-user'
 def registry = '562955126301.dkr.ecr.eu-west-2.amazonaws.com'
@@ -27,14 +27,14 @@ node {
       imageNameDevelopment = "ffc-node-development"
       imageRepository = "$registry/$imageName"
       imageRepositoryDevelopment = "$registry/$imageNameDevelopment"
-      imageTag = "$version-node${nodeVersions[0]}" + (pr ? "-pr$pr" : "")
+      imageTag = "$version-node${nodeVersion}" + (pr ? "-pr$pr" : "")
     }
 
     stage('Build') {
-      sh "docker build --no-cache --tag $imageRepository:$imageTag --build-arg NODE_VERSION=${nodeVersions[0]} \
+      sh "docker build --no-cache --tag $imageRepository:$imageTag --build-arg NODE_VERSION=${nodeVersion} \
       --build-arg VERSION=$version --target production ffc-node-parent/. "
 
-      sh "docker build --no-cache --tag $imageRepositoryDevelopment:$imageTag --build-arg NODE_VERSION=${nodeVersions[0]} \
+      sh "docker build --no-cache --tag $imageRepositoryDevelopment:$imageTag --build-arg NODE_VERSION=${nodeVersion} \
       --build-arg VERSION=$version --target development ffc-node-parent/. "
     }
 
@@ -49,7 +49,7 @@ node {
       // Remove PR image tags from registry after merge to master.
       // Leave digests as these will be reused by master build or cleaned up automatically.
       stage('Clean registry') {
-        prImageTag = "$version-node${nodeVersions[0]}-$mergedPrNo"
+        prImageTag = "$version-node${nodeVersion}-$mergedPrNo"
 
         sh """
           aws --region $awsRegion \
