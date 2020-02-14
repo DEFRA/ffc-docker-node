@@ -1,6 +1,11 @@
-@Library('defra-library@0.0.8')
+@Library('defra-library@0.0.13')
 import uk.gov.defra.ffc.DefraUtils
 def defraUtils = new DefraUtils()
+
+// Update these variables to set the version information
+def version = '1.0.0'
+def nodeVersion = '12.16.0'
+//
 
 def awsRegion = 'eu-west-2'
 def containerTag = ''
@@ -8,12 +13,10 @@ def imageName = 'ffc-node'
 def imageNameDevelopment = 'ffc-node-development'
 def imageTag = ''
 def mergedPrNo = ''
-def nodeVersion = '12.16.0'
 def pr = ''
 def regCredsId = 'ecr:eu-west-2:ecr-user'
 def registry = '562955126301.dkr.ecr.eu-west-2.amazonaws.com'
 def repoName = 'ffc-docker-parent'
-def version = '1.0.0'
 
 node {
   checkout scm
@@ -45,12 +48,18 @@ node {
       }
     }
 
+// Fake PR merge
+    if (!mergedPrNo) {
+      stage('Fake merge') {
+        mergedPrNo="pr$pr"
+      }
+    }
+
     if (mergedPrNo) {
       // Remove PR image tags from registry after merge to master.
       // Leave digests as these will be reused by master build or cleaned up automatically.
+      prImageTag = "$version-node${nodeVersion}-$mergedPrNo"
       stage('Clean registry') {
-        prImageTag = "$version-node${nodeVersion}-$mergedPrNo"
-
         sh """
           aws --region $awsRegion \
             ecr batch-delete-image \
@@ -63,6 +72,13 @@ node {
             --image-ids imageTag=$prImageTag \
             --repository-name $imageNameDevelopment
         """
+      }
+      stage('Tag release in github') {
+        withCredentials([
+          string(credentialsId: 'github_ffc_platform_repo', variable: 'gitToken')
+        ]) {
+          defraUtils.triggerRelease(prImageTag, repoName, prImageTag, gitToken)
+        }
       }
     }
 
