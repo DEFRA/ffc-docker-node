@@ -57,11 +57,19 @@ node {
       stage('Clean registry') {
         prImageTag = "$version-node${nodeVersions[0]}-$mergedPrNo"
         prImageDigest = sh(returnStdout: true, script: """
-          docker images --no-trunc --quiet $registry/$imageName:$prImageTag
+          aws --region $awsRegion \
+            ecr describe-images \
+            --image-ids imageTag=$prImageTag \
+            --output text \
+            --query 'imageDetails[].imageDigest' \
+            --repository-name=$imageName
         """).trim()
         prImageDigestDevelopment = sh(returnStdout: true, script: """
           docker images --no-trunc --quiet $registry/$imageNameDevelopment:$prImageTag
         """).trim()
+
+        echo prImageDigest
+        echo prImageDigestDevelopment
 
         // Delete merged PR image tags and digests from registry
         prImageDigest = sh(returnStdout: true, script: """
