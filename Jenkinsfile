@@ -45,6 +45,7 @@ node {
       }
     }
 
+    // Fake PR merge
     if (!mergedPrNo) {
       stage('Fake merge') {
         mergedPrNo="pr$pr"
@@ -55,11 +56,20 @@ node {
       // Remove PR images from registry after merge to master
       stage('Clean registry') {
         prImageTag = "$version-node${nodeVersions[0]}-$mergedPrNo"
-        prImageDigest = sh(returnStdout: true, script: "docker images --no-trunc --quiet $registry/$imageName:$prImageTag").trim()
-        prImageDigestDevelopment = sh(returnStdout: true, script: "docker images --no-trunc --quiet $registry/$imageNameDevelopment:$prImageTag").trim()
+        prImageDigest = sh(returnStdout: true, script: "
+          aws ecr describe-images --image-ids imageTag=$prImageTag --query 'imageDetails[].imageDigest' --repository-name=$imageName"
+        )
+        prImageDigestDevelopment = sh(returnStdout: true, script: "
+          aws ecr describe-images --image-ids imageTag=$prImageTag --query 'imageDetails[].imageDigest' --repository-name=$imageNameDevelopment"
+        )
 
-        sh "aws --region $awsRegion ecr batch-delete-image --repository-name $imageName --image-ids imageDigest=$prImageDigest"
-        sh "aws --region $awsRegion ecr batch-delete-image --repository-name $imageNameDevelopment --image-ids imageDigest=$prImageDigestDevelopment"
+        // Delete merged PR tags from images in registry
+        sh "aws --region $awsRegion ecr batch-delete-image --image-ids imageTag=$prImageTag --repository-name $imageName"
+        sh "aws --region $awsRegion ecr batch-delete-image --image-ids imageTag=$prImageTag --repository-name $imageNameDevelopment"
+
+        // Delete the PR images from registry
+        sh "aws --region $awsRegion ecr batch-delete-image --image-ids imageDigest=$prImageDigest --repository-name $imageName"
+        sh "aws --region $awsRegion ecr batch-delete-image --image-ids imageDigest=$prImageDigestDevelopment --repository-name $imageNameDevelopment"
       }
     }
 
