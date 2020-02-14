@@ -57,10 +57,10 @@ node {
       stage('Clean registry') {
         prImageTag = "$version-node${nodeVersions[0]}-$mergedPrNo"
         prImageDigest = sh(returnStdout: true, script: """
-          aws ecr describe-images --image-ids imageTag=$prImageTag --query 'imageDetails[].imageDigest' --repository-name=$imageName
+          aws --region $awsRegion ecr describe-images --image-ids imageTag=$prImageTag --query 'imageDetails[].imageDigest' --repository-name=$imageName
         """)
         prImageDigestDevelopment = sh(returnStdout: true, script: """
-          aws ecr describe-images --image-ids imageTag=$prImageTag --query 'imageDetails[].imageDigest' --repository-name=$imageNameDevelopment
+          aws --region $awsRegion ecr describe-images --image-ids imageTag=$prImageTag --query 'imageDetails[].imageDigest' --repository-name=$imageNameDevelopment
         """)
 
         // Delete merged PR tags from images in registry
