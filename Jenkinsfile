@@ -45,13 +45,6 @@ node {
       }
     }
 
-    // Fake PR merge
-    if (!mergedPrNo) {
-      stage('Fake merge') {
-        mergedPrNo="pr$pr"
-      }
-    }
-
     if (mergedPrNo) {
       // Remove PR image tags from registry after merge to master.
       // Leave digests as these will be reused by master build or cleaned up automatically.
