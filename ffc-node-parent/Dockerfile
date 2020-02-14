@@ -1,6 +1,6 @@
 # Set default values for build arguments
 ARG IMAGE_VERSION=1.0.0
-ARG NODE_VERSION=10.18.0
+ARG NODE_VERSION=12.16.0
 
 FROM node:$NODE_VERSION-alpine AS production
 

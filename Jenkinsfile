@@ -12,6 +12,7 @@ def containerTag = ''
 def imageName = 'ffc-node'
 def imageNameDevelopment = 'ffc-node-development'
 def imageTag = ''
+def releaseTag = ''
 def mergedPrNo = ''
 def pr = ''
 def regCredsId = 'ecr:eu-west-2:ecr-user'
@@ -49,7 +50,7 @@ node {
       }
     }
 
-// Fake PR merge
+    // Fake PR merge
     if (!mergedPrNo) {
       stage('Fake merge') {
         mergedPrNo="pr$pr"
@@ -78,7 +79,7 @@ node {
         withCredentials([
           string(credentialsId: 'github_ffc_platform_repo', variable: 'gitToken')
         ]) {
-          defraUtils.triggerRelease(prImageTag, repoName, prImageTag, gitToken)
+          defraUtils.triggerRelease(imageTag, repoName, imageTag, gitToken)
         }
       }
     }
