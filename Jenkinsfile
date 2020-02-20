@@ -15,8 +15,8 @@ def imageTag = ''
 def releaseTag = ''
 def mergedPrNo = ''
 def pr = ''
-def regCredsId = 'ecr:eu-west-2:ecr-user'
-def registry = '562955126301.dkr.ecr.eu-west-2.amazonaws.com'
+def regCredsId = 'ecr:eu-west-2:devffc-user'
+def registry = '171014905211.dkr.ecr.eu-west-2.amazonaws.com'
 def repoName = 'ffc-docker-parent'
 
 node {
