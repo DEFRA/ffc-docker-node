@@ -2,6 +2,12 @@
 
 This repository contains the docker files that build parent container images for FFC projects to extend. Each sub-folder contains the source files required to build a single image. There is also an examples folder that contains example Dockerfiles for various services. These can be used to build a Dockerfile for your service which uses the parent images created by this project.
 
+## Versioning
+
+Images are built from this repository by a Jenkins pipeline defined in `./Jenkinsfile`. The images are tagged according to the Dockerfile version and the version of Node on which the image is based. For example, for Dockerfile version `1.0.0` based on Node `12.16.0`, the built image would be tagged `1.0.0-node12.16.0`.
+
+The versions are set as variables near the top of the `Jenkinsfile`. The `dockerfileVersion` should be incremented with each change to the `Dockerfile`, following Semver rules. The `nodeVersion` should be set to the desired version of Node.
+
 ## Example files
 
 `Dockerfile.web` - This is an example web project, that requires a build step to create some static files that are used by the web front end.
