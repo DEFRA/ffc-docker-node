@@ -37,10 +37,10 @@ node {
 
     stage('Build') {
       sh "docker build --no-cache --tag $imageRepository:$imageTag --build-arg NODE_VERSION=${nodeVersion} \
-      --build-arg VERSION=$version --target production ffc-node-parent/. "
+      --build-arg VERSION=$version --target production . "
 
       sh "docker build --no-cache --tag $imageRepositoryDevelopment:$imageTag --build-arg NODE_VERSION=${nodeVersion} \
-      --build-arg VERSION=$version --target development ffc-node-parent/. "
+      --build-arg VERSION=$version --target development . "
     }
 
     stage('Push') {
