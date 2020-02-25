@@ -1,6 +1,15 @@
-# FFC docker parent
+# FFC Docker Node
 
-This repository contains the docker files that build parent container images for FFC projects to extend. Each sub-folder contains the source files required to build a single image. There is also an examples folder that contains example Dockerfiles for various services. These can be used to build a Dockerfile for your service which uses the parent images created by this project.
+This repository contains Node parent Docker image source code for the Future Farming and Countryside programme.
+
+Two parent images are created from this repository:
+
+- ffc-node
+- ffc-node-development
+
+It is recommended that services use [multi-stage builds](https://docs.docker.com/develop/develop-images/multistage-build) to produce production and development images, each extending the appropriate parent, from a single Dockerfile.
+
+[Examples](./example) are provided to show how parent images can be extended for different types of services. These should be a good starting point for building Node services conforming to FFC standards.
 
 ## Versioning
 
@@ -12,7 +21,7 @@ The versions are set as variables near the top of the `Jenkinsfile`. The `docker
 
 `Dockerfile.web` - This is an example web project, that requires a build step to create some static files that are used by the web front end.
 
-`Dockerfile.service` - This is an example project that doesn't expose any external ports (a message based service). There is also no build step in this dockerfile.
+`Dockerfile.service` - This is an example project that doesn't expose any external ports (a message based service). There is also no build step in this Dockerfile.
 
 ## License
 

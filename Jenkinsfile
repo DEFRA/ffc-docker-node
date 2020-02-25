@@ -12,7 +12,7 @@ def imageName = 'ffc-node'
 def imageNameDevelopment = 'ffc-node-development'
 def regCredsId = 'ecr:eu-west-2:ecr-user'
 def registry = '562955126301.dkr.ecr.eu-west-2.amazonaws.com'
-def repoName = 'ffc-docker-parent'
+def repoName = 'ffc-docker-node'
 
 // Variables
 def containerTag = ''
