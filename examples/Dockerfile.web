@@ -2,7 +2,7 @@
 #   You will need to be logged into the registry in order to build this.
 ARG REGISTRY=562955126301.dkr.ecr.eu-west-2.amazonaws.com
 ARG BASE_VERSION=1.0.0
-FROM $REGISTRY/ffc-node-parent:$BASE_VERSION AS base
+FROM $REGISTRY/ffc-node:$BASE_VERSION AS base
 
 # Set the port that is going to be exposed later on in the Dockerfile as well.
 ARG PORT=3000

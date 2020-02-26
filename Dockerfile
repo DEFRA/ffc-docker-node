@@ -1,11 +1,11 @@
 # Set default values for build arguments
-ARG IMAGE_VERSION=1.0.0
+ARG DOCKERFILE_VERSION=1.0.0
 ARG NODE_VERSION=12.16.0
 
 FROM node:$NODE_VERSION-alpine AS production
 
 ARG NODE_VERSION
-ARG IMAGE_VERSION
+ARG DOCKERFILE_VERSION
 
 ENV NODE_ENV production
 
@@ -25,7 +25,7 @@ WORKDIR /home/node
 
 # Label images to aid searching
 LABEL uk.gov.defra.ffc-node.node-version=$NODE_VERSION \
-      uk.gov.defra.ffc-node.version=$IMAGE_VERSION
+      uk.gov.defra.ffc-node.version=$DOCKERFILE_VERSION
 
 FROM production AS development
 
