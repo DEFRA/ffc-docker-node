@@ -1,4 +1,4 @@
-@Library('defra-library@0.0.13')
+@Library('defra-library@2.0.0')
 import uk.gov.defra.ffc.DefraUtils
 def defraUtils = new DefraUtils()
 
@@ -7,11 +7,11 @@ def dockerfileVersion = '1.0.0'
 def nodeVersion = '12.16.0'
 
 // Constants
-def awsRegion = 'eu-west-2'
+def awsRegion = DEFAULT_AWS_REGION
 def imageName = 'ffc-node'
 def imageNameDevelopment = 'ffc-node-development'
-def regCredsId = 'ecr:eu-west-2:ecr-user'
-def registry = '562955126301.dkr.ecr.eu-west-2.amazonaws.com'
+def regCredsId = DOCKER_REGISTRY_CREDENTIALS_ID
+def registry = DOCKER_REGISTRY
 def repoName = 'ffc-docker-node'
 
 // Variables
