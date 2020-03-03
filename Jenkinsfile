@@ -7,6 +7,7 @@ def dockerfileVersion = '1.0.0'
 def nodeVersion = '12.16.0'
 
 // Constants
+def awsCredential = 'devffc-user'
 def awsRegion = DEFAULT_AWS_REGION
 def imageName = 'ffc-node'
 def imageNameDevelopment = 'ffc-node-development'
@@ -19,6 +20,7 @@ def containerTag = ''
 def imageTag = ''
 def mergedPrNo = ''
 def pr = ''
+def releaseTag = ''
 
 node {
   checkout scm
@@ -54,18 +56,20 @@ node {
       // Leave digests as these will be reused by master build or cleaned up automatically.
       prImageTag = "$dockerfileVersion-node${nodeVersion}-$mergedPrNo"
       stage('Clean registry') {
-        sh """
-          aws --region $awsRegion \
-            ecr batch-delete-image \
-            --image-ids imageTag=$prImageTag \
-            --repository-name $imageName
-        """
-        sh """
-          aws --region $awsRegion \
-            ecr batch-delete-image \
-            --image-ids imageTag=$prImageTag \
-            --repository-name $imageNameDevelopment
-        """
+        withAWS(credentials: awsCredential, region: 'eu-west-2') {
+          sh """
+            aws --region $awsRegion \
+              ecr batch-delete-image \
+              --image-ids imageTag=$prImageTag \
+              --repository-name $imageName
+          """
+          sh """
+            aws --region $awsRegion \
+              ecr batch-delete-image \
+              --image-ids imageTag=$prImageTag \
+              --repository-name $imageNameDevelopment
+          """
+        }
       }
       stage('Tag release in github') {
         withCredentials([
