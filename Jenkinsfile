@@ -66,14 +66,12 @@ node {
       stage('Clean registry') {
         withAWS(credentials: awsCredential, region: awsRegion) {
           sh """
-            aws --region $awsRegion \
-              ecr batch-delete-image \
+            aws ecr batch-delete-image \
               --image-ids imageTag=$prImageTag \
               --repository-name $imageNameDevelopment
           """
           sh """
-            aws --region $awsRegion \
-              ecr batch-delete-image \
+            aws ecr batch-delete-image \
               --image-ids imageTag=$prImageTag \
               --repository-name $imageNameProduction
           """
