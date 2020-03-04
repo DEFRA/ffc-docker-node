@@ -1,4 +1,4 @@
-@Library('defra-library@2.0.0')
+@Library('defra-library@3.0.0')
 import uk.gov.defra.ffc.DefraUtils
 def defraUtils = new DefraUtils()
 
@@ -9,65 +9,73 @@ def nodeVersion = '12.16.0'
 // Constants
 def awsCredential = 'devffc-user'
 def awsRegion = DEFAULT_AWS_REGION
-def imageName = 'ffc-node'
 def imageNameDevelopment = 'ffc-node-development'
+def imageNameProduction = 'ffc-node'
 def regCredsId = DOCKER_REGISTRY_CREDENTIALS_ID
 def registry = DOCKER_REGISTRY
 def repoName = 'ffc-docker-node'
 
 // Variables
-def containerTag = ''
 def imageTag = ''
-def mergedPrNo = ''
+def imageRepositoryDevelopment = ''
+def imageRepositoryProduction = ''
+def mergedPrImageTag = ''
 def pr = ''
-def releaseTag = ''
+def versionTag = ''
 
 node {
   checkout scm
 
   try {
     stage('Set variables') {
-      imageTag = "$dockerfileVersion-node${nodeVersion}"
-      (pr, containerTag, mergedPrNo) = defraUtils.getVariables(repoName, imageTag)
+      versionTag = "${dockerfileVersion}-node${nodeVersion}"
+      (pr, imageTag, mergedPrImageTag) = defraUtils.getVariables(repoName, versionTag)
       defraUtils.setGithubStatusPending()
 
-      imageRepository = "$registry/$imageName"
       imageRepositoryDevelopment = "$registry/$imageNameDevelopment"
-      imageTag = imageTag + (pr ? "-pr$pr" : "")
+      imageRepositoryProduction = "$registry/$imageNameProduction"
     }
 
     stage('Build') {
-      sh "docker build --no-cache --tag $imageRepository:$imageTag --build-arg NODE_VERSION=${nodeVersion} \
-      --build-arg VERSION=$dockerfileVersion --target production . "
+      sh "docker build --no-cache \
+        --tag $imageRepositoryDevelopment:$imageTag \
+        --build-arg NODE_VERSION=${nodeVersion} \
+        --build-arg VERSION=$dockerfileVersion \
+        --target development \
+        ."
 
-      sh "docker build --no-cache --tag $imageRepositoryDevelopment:$imageTag --build-arg NODE_VERSION=${nodeVersion} \
-      --build-arg VERSION=$dockerfileVersion --target development . "
+      sh "docker build --no-cache \
+        --build-arg NODE_VERSION=${nodeVersion} \
+        --build-arg VERSION=$dockerfileVersion \
+        --tag $imageRepositoryProduction:$imageTag \
+        --target production \
+        ."
     }
 
     stage('Push') {
       docker.withRegistry("https://$registry", regCredsId) {
-        sh "docker push $imageRepository:$imageTag"
         sh "docker push $imageRepositoryDevelopment:$imageTag"
+        sh "docker push $imageRepositoryProduction:$imageTag"
       }
     }
 
-    if (mergedPrNo) {
+    if (mergedPrImageTag) {
       // Remove PR image tags from registry after merge to master.
       // Leave digests as these will be reused by master build or cleaned up automatically.
-      prImageTag = "$dockerfileVersion-node${nodeVersion}-$mergedPrNo"
+      prImageTag = "$dockerfileVersion-node${nodeVersion}-$mergedPrImageTag"
       stage('Clean registry') {
         withAWS(credentials: awsCredential, region: 'eu-west-2') {
           sh """
             aws --region $awsRegion \
               ecr batch-delete-image \
               --image-ids imageTag=$prImageTag \
-              --repository-name $imageName
+              --repository-name $imageNameDevelopment
           """
           sh """
             aws --region $awsRegion \
               ecr batch-delete-image \
               --image-ids imageTag=$prImageTag \
-              --repository-name $imageNameDevelopment
+              --repository-name $imageNameProduction
           """
         }
       }
