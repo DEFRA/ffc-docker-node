@@ -64,7 +64,7 @@ node {
       // Leave digests as these will be reused by master build or cleaned up automatically.
       prImageTag = "$dockerfileVersion-node${nodeVersion}-$mergedPrImageTag"
       stage('Clean registry') {
-        withAWS(credentials: awsCredential, region: 'eu-west-2') {
+        withAWS(credentials: awsCredential, region: awsRegion) {
           sh """
             aws --region $awsRegion \
               ecr batch-delete-image \
