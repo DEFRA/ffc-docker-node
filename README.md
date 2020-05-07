@@ -1,5 +1,7 @@
 # FFC Docker Node
 
+N.B. This repo has now been archived as its functionality now exists in other services
+
 This repository contains Node parent Docker image source code for the Future Farming and Countryside programme.
 
 Two parent images are created from this repository:
